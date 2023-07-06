@@ -10,13 +10,33 @@ class GraphqlController < ApplicationController
     operation_name = params[:operationName]
     context = {
       # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user,
     }
     result = RailsGraphqlSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
   rescue StandardError => e
     raise e unless Rails.env.development?
     handle_error_in_development(e)
+  end
+
+  def query
+    params[:query]
+  end
+
+  def variables
+    prepare_variables params[:variables]
+  end
+
+  def operation_name
+    params[:operationName]
+  end
+
+  def context
+    if is_sign_in_request?
+      { sign_in: method(:sign_in) }
+    else
+      { current_user: current_user }
+    end
   end
 
   private
@@ -39,6 +59,14 @@ class GraphqlController < ApplicationController
     else
       raise ArgumentError, "Unexpected parameter: #{variables_param}"
     end
+  end
+
+  def unauthenticated_operation?
+    is_sign_in_request?
+  end
+
+  def is_sign_in_request?
+    query.include?('signup')
   end
 
   def handle_error_in_development(e)
