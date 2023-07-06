@@ -49,4 +49,5 @@ end
 
 gem 'graphql', "~> 2.0.24"
 gem 'graphql-voyager-rails', "~> 1.0.4"
+gem 'devise', "~> 4.9.2"
 
