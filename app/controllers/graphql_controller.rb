@@ -66,8 +66,7 @@ class GraphqlController < ApplicationController
   end
 
   def is_sign_in_request?
-    query.include?('signup') ||
-    query.include?('signIn')
+    query.include?('signup')
   end
 
   def handle_error_in_development(e)
